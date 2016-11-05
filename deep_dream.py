@@ -3,7 +3,6 @@ import numpy as np
 import cv2
 from functools import partial
 import tensorflow as tf
-import matplotlib.pyplot as plt
 import sys
 import urllib
 import os
@@ -14,8 +13,12 @@ output_image_counter = 0
 def main(input_filename):
     #Step 1 - download google's pre-trained neural network
     url = 'https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip'
-    data_dir = '../data/'
+    data_dir = 'data/'
     model_name = os.path.split(url)[-1]
+
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir)
+
     local_zip_file = os.path.join(data_dir, model_name)
     if not os.path.exists(local_zip_file):
         # Download
