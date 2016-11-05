@@ -1,10 +1,13 @@
+# THE MUTHA FUCKING OUTPUT
+
+
 # deep_dream_challenge
 Deep Dream Challenge code by @SIrajology on [Youtube](https://youtu.be/MrBzgvUNr4w)
 
 ##Overview
 
 This is the code for the Deep Dream challenge for 'Learn Python for Data Science #5' by @Sirajology on [YouTube](https://youtu.be/MrBzgvUNr4wY). The code uses the Tensorflow Machine Learning library to generate a trippy image
-from a given input image. 
+from a given input image.
 
 ##Dependencies
 
@@ -27,17 +30,17 @@ Once you have your dependencies installed via pip, run the demo script in termin
 python deep_dream.py
 ```
 
-##Challenge 
+##Challenge
 
-The instructions are 
+The instructions are
 
-1. Add a function to the existing deep dream python file that converts not just an image, but a video clip to deep dream. 
+1. Add a function to the existing deep dream python file that converts not just an image, but a video clip to deep dream.
 
-*HINT* Think of a video as a collection of images (frames). 
+*HINT* Think of a video as a collection of images (frames).
 
 If you want to use your own template, that's fine too. Submit your code in the comments section and I'll announce the winner in
 the next video. Good luck!
 
 ##Credits
 
-Thanks Google and [Liu](https://github.com/LiuzcEECS) I've reformatted this code to make it easier to grok. 
+Thanks Google and [Liu](https://github.com/LiuzcEECS) I've reformatted this code to make it easier to grok.
