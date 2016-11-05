@@ -1,7 +1,7 @@
 import random
 import numpy as np
+import cv2
 from functools import partial
-import PIL.Image
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import sys
@@ -78,16 +78,6 @@ def main(input_filename):
                 n.input[i] = rename_func(s) if s[0]!='^' else '^'+rename_func(s[1:])
         return res_def
 
-    def showarray(a):
-        global output_image_counter
-        a = np.uint8(np.clip(a, 0, 1)*255)
-        filename = 'output_' + str(output_image_counter)
-        print 'writing file: ', filename
-        output_image_counter += 1
-        plt.imshow(a)
-        plt.imsave(filename, a)
-        #plt.show()
-
     def visstd(a, s=0.1):
         '''Normalize the image range for visualization'''
         return (a-a.mean())/max(a.std(), 1e-4)*s + 0.5
@@ -150,7 +140,7 @@ def main(input_filename):
 
 
     def render_deepdream(t_obj, img0=img_noise,
-                         iter_n=10, step=1.5, octave_n=4, octave_scale=1.4):
+                         iter_n=10, step=1.5, octave_n=8, octave_scale=1.4):
         t_score = tf.reduce_mean(t_obj) # defining the optimization objective
         t_grad = tf.gradients(t_score, t_input)[0] # behold the power of automatic differentiation!
 
@@ -173,9 +163,10 @@ def main(input_filename):
                 g = calc_grad_tiled(img, t_grad)
                 img += g*(step / (np.abs(g).mean()+1e-7))
 
-            #this will usually be like 3 or 4 octaves
-            #Step 5 output deep dream image via matplotlib
-            showarray(img/255.0)
+        #Step 5 return frame
+        output_frame = img / 255.0
+        output_frame = np.uint8(np.clip(output_frame, 0, 1)*255)
+        return output_frame
 
 
 
@@ -183,17 +174,34 @@ def main(input_filename):
     layer = 'mixed4d_3x3_bottleneck_pre_relu'
     channel = 139 # picking some feature channel to visualize
 
-    #open image
-    img0 = PIL.Image.open(input_filename)
-    img0 = np.float32(img0)
+    #open video file
+    cap = cv2.VideoCapture(input_filename)
 
-    #Step 4 - Apply gradient ascent to that layer
-    render_deepdream(tf.square(T('mixed4c')), img0)
+    writer = None
+    i = 0
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+
+        if frame is None:
+            break
+
+        #Step 4 - Apply gradient ascent to that layer
+        output_frame = render_deepdream(tf.square(T('mixed4c')), frame)
+        if writer is None:
+            frame_size = (output_frame.shape[1], output_frame.shape[0])
+            writer = cv2.VideoWriter('output.avi', cv2.cv.FOURCC(*'XVID'), 20, frame_size)
+
+        writer.write(output_frame)
+        i += 1
+        print 'frame %i complete.' % i
+
+    cap.release()
+
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        input_filename = 'input.jpg'
+        input_filename = 'input.avi'
     else:
         input_filename = sys.argv[1]
 
