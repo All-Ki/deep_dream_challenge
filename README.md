@@ -1,5 +1,7 @@
 # THE MUTHA FUCKING OUTPUT
 
+look at the avi video files in `./examples`
+
 
 # deep_dream_challenge
 Deep Dream Challenge code by @SIrajology on [Youtube](https://youtu.be/MrBzgvUNr4w)
