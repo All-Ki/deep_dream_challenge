@@ -89,18 +89,6 @@ def main(input_filename):
         '''Helper for getting layer output tensor'''
         return graph.get_tensor_by_name("import/%s:0"%layer)
 
-    def render_naive(t_obj, img0=img_noise, iter_n=20, step=1.0):
-        t_score = tf.reduce_mean(t_obj) # defining the optimization objective
-        t_grad = tf.gradients(t_score, t_input)[0] # behold the power of automatic differentiation!
-
-        img = img0.copy()
-        for _ in range(iter_n):
-            g, _ = sess.run([t_grad, t_score], {t_input:img})
-            # normalizing the gradient, so the same step size should work
-            g /= g.std()+1e-8         # for different layers and networks
-            img += g*step
-        showarray(visstd(img))
-
     def tffunc(*argtypes):
         '''Helper that transforms TF-graph generating function into a regular one.
         See "resize" function below.
@@ -138,12 +126,8 @@ def main(input_filename):
     ########################################################################################################
     ##############################################################################
 
-    #CHALLENGE - Write a function that outputs a deep dream video
-    #def render_deepdreamvideo():
-
-
     def render_deepdream(t_obj, img0=img_noise,
-                         iter_n=10, step=1.5, octave_n=8, octave_scale=1.4):
+                         iter_n=10, step=1.8, octave_n=6, octave_scale=1.2):
         t_score = tf.reduce_mean(t_obj) # defining the optimization objective
         t_grad = tf.gradients(t_score, t_input)[0] # behold the power of automatic differentiation!
 
@@ -171,12 +155,6 @@ def main(input_filename):
         output_frame = np.uint8(np.clip(output_frame, 0, 1)*255)
         return output_frame
 
-
-
-   	#Step 3 - Pick a layer to enhance our image
-    layer = 'mixed4d_3x3_bottleneck_pre_relu'
-    channel = 139 # picking some feature channel to visualize
-
     #open video file
     cap = cv2.VideoCapture(input_filename)
 
@@ -189,10 +167,10 @@ def main(input_filename):
             break
 
         #Step 4 - Apply gradient ascent to that layer
-        output_frame = render_deepdream(tf.square(T('mixed4c')), frame)
+        output_frame = render_deepdream(tf.square(T('mixed3a')), frame)
         if writer is None:
             frame_size = (output_frame.shape[1], output_frame.shape[0])
-            writer = cv2.VideoWriter('output.avi', cv2.cv.FOURCC(*'XVID'), 20, frame_size)
+            writer = cv2.VideoWriter('output.avi', cv2.cv.FOURCC(*'XVID'), 30, frame_size)
 
         writer.write(output_frame)
         i += 1
