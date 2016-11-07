@@ -3,7 +3,9 @@
 look at the avi video files in `./examples`
 
 Or for lazy people who don't care about low quality video:
+
 https://www.youtube.com/watch?v=I9RfmLHSrto
+
 https://www.youtube.com/watch?v=kUXDwsMpIUA
 
 
